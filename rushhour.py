@@ -206,6 +206,7 @@ if __name__ == "__main__":
     # puzzle.setVehicles("e-f.csv") # seventh CSV with wall
 
     puzzle.setBoard()
+    successors = puzzle.successorFunction() 
     puzzle.display()
 
     print("Is goal?", puzzle.isGoal())
