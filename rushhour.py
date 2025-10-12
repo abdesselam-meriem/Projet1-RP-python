@@ -1,5 +1,7 @@
 import csv
 from collections import deque
+from animation_utils import animate_solution_with_original
+
 
 class Vehicle:
     def __init__(self, vid, x, y, orientation, length):
@@ -213,6 +215,7 @@ if __name__ == "__main__":
 
     solution_node = bfs(puzzle)
     if solution_node:
+        animate_solution_with_original(puzzle, solution_node)
         print("Solution found in", solution_node.path_cost, "steps")
         print("Actions to solve:")
         for action in solution_node.getSolution():
