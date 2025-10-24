@@ -247,8 +247,8 @@ if __name__ == "__main__":
     puzzle = RushHourPuzzle()  
 
     # Choose the puzzle CSV file
-    puzzle.setVehicles("1.csv")   # first CSV
-    # puzzle.setVehicles("2-a.csv")  # second CSV
+    # puzzle.setVehicles("1.csv")   # first CSV
+    puzzle.setVehicles("2-a.csv")  # second CSV
     # puzzle.setVehicles("2-b.csv") # third CSV with wall
     # puzzle.setVehicles("2-c.csv") # fourth CSV with wall
     # puzzle.setVehicles("2-d.csv") # fifth CSV with wall
