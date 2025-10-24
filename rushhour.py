@@ -1,6 +1,8 @@
 import csv
 from collections import deque
 from animation_utils import animate_solution_with_original
+import heapq
+import itertools
 
 
 class Vehicle:
@@ -110,7 +112,7 @@ class RushHourPuzzle:
 
 
 # =============================
-# Node class (same as before)
+# Node class 
 # =============================
 class Node:
     def __init__(self, state, parent=None, action=None):
@@ -134,7 +136,7 @@ class Node:
 
 
 # =============================
-# BFS (exactly your teacher’s version)
+# BFS
 # =============================
 def BFS(initial_puzzle):
     def successorsFn(state):
@@ -179,10 +181,68 @@ def same_state(p1, p2):
                           sorted(p2.vehicles, key=lambda x: x.vid))
     )
 
+# =============================
+# A* Search 
+# =============================
 
-# =============================
-# Test BFS
-# =============================
+def heuristic(puzzle):
+    """Heuristic: number of blocking cars in front of the red car 'X'"""
+    for v in puzzle.vehicles:
+        if v.vid == "X":
+            row, end_col = v.row, v.col + v.length
+            # Count blocking vehicles or walls between red car and exit
+            blocks = 0
+            for c in range(end_col, puzzle.board_width):
+                cell = puzzle.board[row][c]
+                if cell != ".":
+                    blocks += 1
+            return blocks
+    return 0
+
+
+def A_star(initial_puzzle):
+    def successorsFn(state):
+        return state.successorFunction()
+
+    def isGoal(state):
+        return state.isGoal()
+
+    # Priority queue and visited list
+    Open = []
+    Closed = []
+    counter = itertools.count()  # tie-breaker to avoid comparing Node objects
+
+    init_node = Node(initial_puzzle, None, None)
+    g = 0
+    h = heuristic(initial_puzzle)
+    f = g + h
+
+    heapq.heappush(Open, (f, next(counter), g, init_node))
+
+    while Open:
+        _, _, g, current = heapq.heappop(Open)
+        Closed.append(current.state)
+
+        if isGoal(current.state):
+            return current
+
+        for action, successor in successorsFn(current.state):
+            child = Node(successor, current, action)
+            if any(same_state(child.state, s) for s in Closed):
+                continue
+
+            g_child = g + 1
+            h_child = heuristic(successor)
+            f_child = g_child + h_child
+
+            # Avoid duplicates in open list
+            if not any(same_state(child.state, n[3].state) for n in Open):
+                heapq.heappush(Open, (f_child, next(counter), g_child, child))
+
+    return None
+
+
+
 if __name__ == "__main__":
     puzzle = RushHourPuzzle()  
 
@@ -200,11 +260,24 @@ if __name__ == "__main__":
 
     print("Is goal?", puzzle.isGoal())
 
+    print ("Running BFS search")
     solution_node = BFS(puzzle)
 
     if solution_node:
-        animate_solution_with_original(puzzle, solution_node)
-        print("Solution found!")
+        # animate_solution_with_original(puzzle, solution_node)
+        print("Solution found! by BFS search")
         print("Actions:", solution_node.getSolution())
     else:
         print("No solution found.")
+
+
+    print("Running A* search...")
+    solution_node = A_star(puzzle)
+
+    if solution_node:
+        animate_solution_with_original(puzzle, solution_node)
+        print("Solution found! by A* search")
+        print("Actions:", solution_node.getSolution())
+    else:
+        print("No solution found.")
+
