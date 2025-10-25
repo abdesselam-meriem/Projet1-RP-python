@@ -2,15 +2,15 @@ import csv
 from collections import deque
 import time
 import heapq
-import pygame 
+import pygame  # type: ignore
 import sys
 
 # Initialize Pygame
 pygame.init()
 
 # Constants
-SCREEN_WIDTH = 1200
-SCREEN_HEIGHT = 700
+SCREEN_WIDTH = 1300
+SCREEN_HEIGHT = 650
 BOARD_MARGIN = 50
 INFO_PANEL_WIDTH = 400
 CELL_SIZE = 60
@@ -19,33 +19,21 @@ FPS = 60
 # Colors
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
-GRAY = (200, 200, 200)
 DARK_GRAY = (100, 100, 100)
-RED = (255, 0, 0)
-DARK_RED = (180, 0, 0)
-GREEN = (0, 255, 0)
-BLUE = (0, 0, 255)
-DARK_BLUE = (0, 0, 180)
-YELLOW = (255, 255, 0)
-ORANGE = (255, 165, 0)
-PURPLE = (128, 0, 128)
-CYAN = (0, 255, 255)
-BROWN = (139, 69, 19)
-LIGHT_BLUE = (173, 216, 230)
 
 # Vehicle colors with realistic car colors
 VEHICLE_COLORS = {
-    'X': (RED, DARK_RED),  
-    'A': (BLUE, DARK_BLUE),
-    'B': (GREEN, (0, 100, 0)),
-    'C': (YELLOW, (180, 180, 0)),
-    'D': (ORANGE, (200, 100, 0)),
-    'E': (PURPLE, (80, 0, 80)),
-    'F': (CYAN, (0, 150, 150)),
-    'G': (BROWN, (100, 50, 0)),
-    'H': (LIGHT_BLUE, (100, 150, 200)),
-    'I': ((255, 192, 203), (200, 100, 120)),  # Pink
-    'J': ((144, 238, 144), (50, 150, 50)),    # Light green
+    'X': ((255, 0, 0), (180, 0, 0)),  # red 
+    'A': ((0, 0, 255), (0, 0, 180)),  # Royal Blue
+    'B': ((30, 144, 255), (20, 100, 200)),  # Dodger Blue
+    'C': ((0, 191, 255), (0, 140, 200)),  # Deep Sky Blue
+    'D': ((100, 149, 237), (70, 100, 200)),  # Cornflower Blue
+    'E': ((65, 105, 225), (45, 75, 180)),  # Royal Blue
+    'F': ((0, 0, 139), (0, 0, 100)),  # Dark Blue
+    'G': ((72, 61, 139), (50, 40, 100)),  # Dark Slate Blue
+    'H': ((106, 90, 205), (80, 60, 160)),  # Slate Blue
+    'I': ((123, 104, 238), (90, 70, 180)),  # Medium Slate Blue
+    'J': ((135, 206, 250), (100, 150, 200)),  # Light Sky Blue
 }
 
 class Vehicle:
@@ -507,8 +495,11 @@ class PygameVisualizer:
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption("Rush Hour Puzzle Solver")
         self.clock = pygame.time.Clock()
-        self.font = pygame.font.Font(None, 36)
-        self.small_font = pygame.font.Font(None, 24)
+
+        # Initialize fonts with Times New Roman
+        self.font = pygame.font.SysFont("Times New Roman", 36)
+        self.small_font = pygame.font.SysFont("Times New Roman", 24)
+   
         self.puzzle = puzzle
         
         # Create default colors for vehicles not in VEHICLE_COLORS
@@ -660,7 +651,7 @@ class PygameVisualizer:
             CELL_SIZE
         )
         # Draw garage door
-        pygame.draw.rect(self.screen, (150, 75, 0), exit_rect)  # Brown door
+        pygame.draw.rect(self.screen, (0, 0, 0), exit_rect)  
         # Draw door panels
         for i in range(3):
             panel_rect = pygame.Rect(
@@ -728,24 +719,24 @@ class PygameVisualizer:
         self.screen.blit(step_text, (board_x, board_y - 40))
         
         # Draw algorithm name above board
-        algo_text = self.font.render(f"Algorithm: {algorithm_name}", True, BLACK)
-        self.screen.blit(algo_text, (board_x, board_y - 80))
+        algo_text = self.font.render(f"Algorithm: {algorithm_name}", True, (0, 0, 180))
+        self.screen.blit(algo_text, (board_x, board_y - 70))
     
     def draw_info_panel(self, current_step, total_steps, algorithm_name, stats):
-        panel_x = SCREEN_WIDTH - INFO_PANEL_WIDTH + 20
+        panel_x = SCREEN_WIDTH - INFO_PANEL_WIDTH + 30
         panel_y = 50
         
         # Draw panel background (car dashboard style)
-        dashboard_color = (60, 60, 80)
+        dashboard_color = (0, 0, 180)
         pygame.draw.rect(self.screen, dashboard_color, 
                         (SCREEN_WIDTH - INFO_PANEL_WIDTH, 0, INFO_PANEL_WIDTH, SCREEN_HEIGHT))
         
         # Draw panel border
-        pygame.draw.rect(self.screen, (100, 100, 120), 
+        pygame.draw.rect(self.screen, (0, 0, 180), 
                         (SCREEN_WIDTH - INFO_PANEL_WIDTH, 0, INFO_PANEL_WIDTH, SCREEN_HEIGHT), 3)
         
         # Title (like a car display)
-        title = self.font.render("RUSH HOUR SOLVER", True, (255, 255, 0))  # Yellow text
+        title = self.font.render("RUSH HOUR SOLVER", True, (173, 216, 230))  # light blue text
         self.screen.blit(title, (panel_x, panel_y))
         
         # Algorithm info
@@ -757,7 +748,7 @@ class PygameVisualizer:
         
         # Statistics panel
         stats_y = panel_y + 120
-        stats_title = self.small_font.render("PERFORMANCE STATS:", True, (255, 200, 0))
+        stats_title = self.small_font.render("PERFORMANCE STATS:", True, (173, 216, 230))
         self.screen.blit(stats_title, (panel_x, stats_y))
         
         # Draw stats as gauges
@@ -771,7 +762,7 @@ class PygameVisualizer:
         
         # Controls panel
         controls_y = SCREEN_HEIGHT - 180
-        controls_title = self.small_font.render("CONTROLS:", True, (255, 200, 0))
+        controls_title = self.small_font.render("CONTROLS:", True, (173, 216, 230))
         self.screen.blit(controls_title, (panel_x, controls_y))
         
         controls = [
@@ -788,7 +779,7 @@ class PygameVisualizer:
             
             # Add car icon next to controls
             car_icon_rect = pygame.Rect(panel_x - 25, controls_y + 25 + i * 25, 20, 10)
-            pygame.draw.rect(self.screen, RED, car_icon_rect, border_radius=3)
+            pygame.draw.rect(self.screen, (173, 216, 230), car_icon_rect, border_radius=3)
     
     def animate_solution(self, solution_node, algorithm_name, stats, delay=500):
         if not solution_node:
@@ -831,14 +822,14 @@ class PygameVisualizer:
             
             # Check if goal is reached
             if current_step == len(actions):
-                goal_text = self.font.render("GOAL REACHED! 🏁", True, (0, 255, 0))
+                goal_text = self.font.render("GOAL REACHED! 🏁", True, (128, 0, 128))
                 text_rect = goal_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT - 50))
                 self.screen.blit(goal_text, text_rect)
                 
                 # Draw celebration effect
                 for i in range(5):
                     x = SCREEN_WIDTH // 2 - 100 + i * 50
-                    pygame.draw.circle(self.screen, (255, 255, 0), (x, SCREEN_HEIGHT - 80), 8)
+                    pygame.draw.circle(self.screen, (128, 0, 128), (x, SCREEN_HEIGHT - 80), 8)
             
             pygame.display.flip()
             self.clock.tick(FPS)
